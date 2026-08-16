@@ -53,6 +53,26 @@ test('a fix button filters the sidebar to compatible alternatives', async ({ pag
   await expect(page.locator('[data-rule="cassette-driver"]')).toHaveAttribute('data-level', 'certified')
 })
 
+test('click-to-browse: an empty slot points the parts panel at it, and clicking a part fits it', async ({ page }) => {
+  await page.goto('#/')
+  await page.getByTestId('preset-surly-lht-disc-gx11').click()
+  await page.getByTestId('slot-cassette').getByTitle('Remove part').click()
+  await expect(page.getByTestId('slot-cassette')).toContainText('click to browse')
+
+  // A stale search must not survive the slot click, or the panel comes up empty.
+  await page.getByPlaceholder('Search parts…').fill('no-such-part')
+  await page.getByTestId('slot-cassette').click()
+
+  await expect(page.getByPlaceholder('Search parts…')).toHaveValue('')
+  await expect(page.getByTestId('browsing-banner')).toContainText('cassette')
+  await expect(page.getByTestId('slot-cassette')).toHaveAttribute('data-browsing', 'true')
+
+  // Clicking the part card itself — not just the small "place" button — fits the part.
+  await page.getByTestId('catalog-part-shimano-cs-m5100-11-51').click()
+  await expect(page.getByTestId('slot-cassette')).toContainText('CS-M5100-11')
+  await expect(page.getByTestId('browsing-banner')).toHaveCount(0)
+})
+
 test('driver wizard identifies Micro Spline from answers and starts a bike with it', async ({ page }) => {
   await page.goto('#/wizard/driver')
   await page.getByRole('button', { name: '12' }).click()

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   DndContext,
@@ -36,27 +36,42 @@ const SLOT_TINT: Record<CompatLevel, string> = {
   incompatible: 'ring-2 ring-verdict-bad bg-verdict-bad-soft',
 }
 
+/** Movement below this is a click, not a drag — shared with the pointer sensor below. */
+const DRAG_ACTIVATION_DISTANCE = 6
+
 function SlotCard({
   category,
   part,
   hover,
+  browsing,
   onClear,
   onClick,
 }: {
   category: ComponentCategory
   part?: Part
   hover?: CompatLevel | null
+  browsing?: boolean
   onClear?: () => void
   onClick: () => void
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: `slot-${category}` })
-  const tint = isOver && hover ? SLOT_TINT[hover] : ''
+  const tint = isOver && hover ? SLOT_TINT[hover] : browsing ? 'ring-2 ring-indigo-500 bg-indigo-50/50' : ''
   return (
     <div
       ref={setNodeRef}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Browse ${CATEGORY_LABELS[category]} parts`}
       data-testid={`slot-${category}`}
-      className={`relative cursor-pointer rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all ${tint}`}
+      data-browsing={browsing ? 'true' : undefined}
+      className={`relative cursor-pointer rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-indigo-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${tint}`}
     >
       <div className="mb-1 flex items-center justify-between">
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -95,8 +110,31 @@ function SlotCard({
 
 function DraggableCatalogCard({ part, onPlace }: { part: Part; onPlace: () => void }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: part.id })
+  // The card is both draggable and clickable. The pointer sensor only promotes a
+  // gesture to a drag past DRAG_ACTIVATION_DISTANCE, so anything shorter is a click
+  // — but a drag that ends back over this card would still fire one, hence the check.
+  const pointerStart = useRef<{ x: number; y: number } | null>(null)
+
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes} className={isDragging ? 'opacity-40' : ''} data-testid={`catalog-part-${part.id}`}>
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      // Capture phase: recording the origin here leaves dnd-kit's own
+      // onPointerDown listener (spread above) intact.
+      onPointerDownCapture={(e) => {
+        pointerStart.current = { x: e.clientX, y: e.clientY }
+      }}
+      onClick={(e) => {
+        const start = pointerStart.current
+        pointerStart.current = null
+        if (start && Math.hypot(e.clientX - start.x, e.clientY - start.y) >= DRAG_ACTIVATION_DISTANCE) return
+        onPlace()
+      }}
+      className={`cursor-pointer rounded-lg transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${isDragging ? 'opacity-40' : ''}`}
+      data-testid={`catalog-part-${part.id}`}
+      title={`Put ${part.brand} ${part.model} on the bike`}
+    >
       <div className="relative">
         <PartCard part={part} />
         <button
@@ -130,9 +168,12 @@ export function WorkbenchPage() {
   const [activePart, setActivePart] = useState<Part | null>(null)
   const [hoverVerdict, setHoverVerdict] = useState<CompatLevel | null>(null)
   const [lastSwap, setLastSwap] = useState<{ part: Part; swap: SwapReport } | null>(null)
+  /** The slot the user clicked to browse for, if any — drives the "you're picking X" affordances. */
+  const [browsingSlot, setBrowsingSlot] = useState<ComponentCategory | null>(null)
+  const partsPanelRef = useRef<HTMLElement>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: DRAG_ACTIVATION_DISTANCE } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
     useSensor(KeyboardSensor),
   )
@@ -160,6 +201,17 @@ export function WorkbenchPage() {
     const swap = checkSwap(build!, part, catalog)
     updateSlots(build!.id, { [part.category]: part.id })
     setLastSwap({ part, swap })
+    setBrowsingSlot(null)
+  }
+
+  /** Clicking a slot (or a category chip) points the parts panel at that category. */
+  function browseCategory(category: ComponentCategory, scroll = false) {
+    setFilter({ category })
+    setBrowsingSlot(category)
+    // A leftover search would hide every part and make the click look like a no-op.
+    setSearch('')
+    // On narrow screens the parts panel stacks far below the diagram, so bring it up.
+    if (scroll) partsPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }
 
   function onDragStart(e: DragStartEvent) {
@@ -210,8 +262,9 @@ export function WorkbenchPage() {
                 category={cat}
                 part={build.slots[cat] ? catalog.byId.get(build.slots[cat]!) : undefined}
                 hover={hoverVerdict}
+                browsing={browsingSlot === cat}
                 onClear={cat !== 'rearHub' ? () => updateSlots(build.id, { [cat]: undefined }) : undefined}
-                onClick={() => setFilter({ category: cat })}
+                onClick={() => browseCategory(cat, true)}
               />
             ))}
           </div>
@@ -232,14 +285,24 @@ export function WorkbenchPage() {
             </div>
           )}
 
-          <VerdictPanel report={report} catalog={catalog} onApplyFilter={(f) => setFilter(f)} />
+          <VerdictPanel
+            report={report}
+            catalog={catalog}
+            onApplyFilter={(f) => {
+              setFilter(f)
+              setBrowsingSlot(f.category)
+            }}
+          />
         </div>
 
-        <aside className="space-y-3">
+        <aside className="space-y-3" ref={partsPanelRef}>
           <h2 className="text-lg font-bold">Parts</h2>
           <div className="flex flex-wrap gap-1.5">
             <button
-              onClick={() => setFilter(null)}
+              onClick={() => {
+                setFilter(null)
+                setBrowsingSlot(null)
+              }}
               className={`rounded-full px-2.5 py-1 text-xs ${!filter ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-600'}`}
             >
               All
@@ -247,13 +310,32 @@ export function WorkbenchPage() {
             {COMPONENT_CATEGORIES.map((c) => (
               <button
                 key={c}
-                onClick={() => setFilter({ category: c })}
+                onClick={() => browseCategory(c)}
                 className={`rounded-full px-2.5 py-1 text-xs ${filter?.category === c ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-600'}`}
               >
                 {CATEGORY_LABELS[c]}
               </button>
             ))}
           </div>
+          {browsingSlot && (
+            <p
+              className="flex items-center gap-2 rounded bg-indigo-50 px-2 py-1 text-xs text-indigo-700"
+              data-testid="browsing-banner"
+            >
+              <span>
+                Choosing a <b>{CATEGORY_LABELS[browsingSlot].toLowerCase()}</b> — click a part to fit it.
+              </span>
+              <button
+                className="ml-auto shrink-0 underline"
+                onClick={() => {
+                  setFilter(null)
+                  setBrowsingSlot(null)
+                }}
+              >
+                cancel
+              </button>
+            </p>
+          )}
           {filter && Object.keys(filter).length > 1 && (
             <p className="rounded bg-indigo-50 px-2 py-1 text-xs text-indigo-700">
               Filtered to matching alternatives — <button className="underline" onClick={() => setFilter({ category: filter.category })}>clear</button>
@@ -265,7 +347,7 @@ export function WorkbenchPage() {
             placeholder="Search parts…"
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
           />
-          <p className="text-xs text-slate-400">Drag a part onto the bike, or hit "place".</p>
+          <p className="text-xs text-slate-400">Click a part to put it on the bike, or drag it onto the diagram.</p>
           <div className="max-h-[70vh] space-y-2 overflow-y-auto pr-1" data-testid="parts-sidebar">
             {sidebarParts.map((p) => (
               <DraggableCatalogCard key={p.id} part={p} onPlace={() => placePart(p)} />
