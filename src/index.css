@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-verdict-ok: #16a34a;
+  --color-verdict-ok-soft: #dcfce7;
+  --color-verdict-warn: #d97706;
+  --color-verdict-warn-soft: #fef3c7;
+  --color-verdict-bad: #dc2626;
+  --color-verdict-bad-soft: #fee2e2;
+  --color-shimano: #1e4b8f;
+  --color-sram: #cc0000;
+}
+
+html {
+  @apply bg-slate-100 text-slate-900;
+}
