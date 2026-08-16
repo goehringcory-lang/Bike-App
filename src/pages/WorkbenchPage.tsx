@@ -44,6 +44,7 @@ function SlotCard({
   part,
   hover,
   browsing,
+  registerNode,
   onClear,
   onClick,
 }: {
@@ -51,6 +52,7 @@ function SlotCard({
   part?: Part
   hover?: CompatLevel | null
   browsing?: boolean
+  registerNode?: (node: HTMLElement | null) => void
   onClear?: () => void
   onClick: () => void
 }) {
@@ -58,7 +60,10 @@ function SlotCard({
   const tint = isOver && hover ? SLOT_TINT[hover] : browsing ? 'ring-2 ring-indigo-500 bg-indigo-50/50' : ''
   return (
     <div
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node)
+        registerNode?.(node)
+      }}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -101,7 +106,10 @@ function SlotCard({
       ) : (
         <div className="flex items-center gap-3 text-slate-400">
           <CategoryIcon category={category} className="h-10 w-10 shrink-0 opacity-40" />
-          <span className="text-sm">Drop a part here or click to browse</span>
+          {/* Dragging needs the part and the slot on screen together, which never
+              happens on a phone — so touch devices are pointed at tapping instead. */}
+          <span className="text-sm [@media(pointer:coarse)]:hidden">Drop a part here or click to browse</span>
+          <span className="hidden text-sm [@media(pointer:coarse)]:inline">Tap to browse parts</span>
         </div>
       )}
     </div>
@@ -171,6 +179,7 @@ export function WorkbenchPage() {
   /** The slot the user clicked to browse for, if any — drives the "you're picking X" affordances. */
   const [browsingSlot, setBrowsingSlot] = useState<ComponentCategory | null>(null)
   const partsPanelRef = useRef<HTMLElement>(null)
+  const slotNodes = useRef(new Map<ComponentCategory, HTMLElement>())
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: DRAG_ACTIVATION_DISTANCE } }),
@@ -202,6 +211,9 @@ export function WorkbenchPage() {
     updateSlots(build!.id, { [part.category]: part.id })
     setLastSwap({ part, swap })
     setBrowsingSlot(null)
+    // On a phone the diagram is scrolled far above the parts panel, so without this
+    // the tap that fits a part shows no result at all.
+    slotNodes.current.get(part.category)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }
 
   /** Clicking a slot (or a category chip) points the parts panel at that category. */
@@ -263,6 +275,10 @@ export function WorkbenchPage() {
                 part={build.slots[cat] ? catalog.byId.get(build.slots[cat]!) : undefined}
                 hover={hoverVerdict}
                 browsing={browsingSlot === cat}
+                registerNode={(node) => {
+                  if (node) slotNodes.current.set(cat, node)
+                  else slotNodes.current.delete(cat)
+                }}
                 onClear={cat !== 'rearHub' ? () => updateSlots(build.id, { [cat]: undefined }) : undefined}
                 onClick={() => browseCategory(cat, true)}
               />
@@ -347,7 +363,10 @@ export function WorkbenchPage() {
             placeholder="Search parts…"
             className="w-full rounded border border-slate-300 px-3 py-1.5 text-sm"
           />
-          <p className="text-xs text-slate-400">Click a part to put it on the bike, or drag it onto the diagram.</p>
+          <p className="text-xs text-slate-400">
+            <span className="[@media(pointer:coarse)]:hidden">Click a part to put it on the bike, or drag it onto the diagram.</span>
+            <span className="hidden [@media(pointer:coarse)]:inline">Tap a part to put it on the bike.</span>
+          </p>
           <div className="max-h-[70vh] space-y-2 overflow-y-auto pr-1" data-testid="parts-sidebar">
             {sidebarParts.map((p) => (
               <DraggableCatalogCard key={p.id} part={p} onPlace={() => placePart(p)} />
