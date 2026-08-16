@@ -92,7 +92,7 @@ export function CustomPartForm({ onDone, onCancel }: Props) {
   const selectField = (key: string, label: string, options: readonly string[], labels?: Record<string, string>) => (
     <div>
       <label className={labelCls}>{label}</label>
-      <select className={inputCls} value={f(key) || options[0]} onChange={set(key)}>
+      <select className={inputCls} value={f(key) || options[0]} onChange={set(key)} data-testid={`field-${key}`}>
         {options.map((o) => (
           <option key={o} value={o}>
             {labels?.[o] ?? o}
@@ -105,7 +105,7 @@ export function CustomPartForm({ onDone, onCancel }: Props) {
   const numField = (key: string, label: string, placeholder = '') => (
     <div>
       <label className={labelCls}>{label}</label>
-      <input className={inputCls} inputMode="numeric" value={f(key)} onChange={set(key)} placeholder={placeholder} />
+      <input className={inputCls} inputMode="numeric" value={f(key)} onChange={set(key)} placeholder={placeholder} data-testid={`field-${key}`} />
     </div>
   )
 
@@ -131,11 +131,11 @@ export function CustomPartForm({ onDone, onCancel }: Props) {
       <div className="grid grid-cols-2 gap-2">
         <div>
           <label className={labelCls}>Brand</label>
-          <input className={inputCls} value={f('brand')} onChange={set('brand')} placeholder="e.g. Sunrace" required />
+          <input className={inputCls} value={f('brand')} onChange={set('brand')} placeholder="e.g. Sunrace" data-testid="field-brand" required />
         </div>
         <div>
           <label className={labelCls}>Model</label>
-          <input className={inputCls} value={f('model')} onChange={set('model')} placeholder="e.g. CSMX80" required />
+          <input className={inputCls} value={f('model')} onChange={set('model')} placeholder="e.g. CSMX80" data-testid="field-model" required />
         </div>
       </div>
       <div>

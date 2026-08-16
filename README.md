@@ -1,32 +1,35 @@
-# React + TypeScript + Vite
+# Will It Fit? 🚲
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A bike drivetrain compatibility checker — answer the shop-counter question *"will this part fit my bike?"*, including cross-brand combos the manufacturers don't document.
 
-Currently, two official plugins are available:
+Set up your bike from a stock preset or from scratch, then drag parts from the catalog onto it. Each swap gets an instant verdict:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- ✅ **Manufacturer certified** — designed and tested together
+- ✅ **Community verified** — cross-brand combo with strong mechanic consensus (e.g. the classic 11-speed "mullet": SRAM 11s shifter + derailleur on a Shimano HG cassette)
+- ⚠️ **Works with caveats** — functions, with tradeoffs spelled out
+- ❌ **Incompatible** — with an explanation of *why* and what you'd need to change ("this cassette needs an XD driver body — swap your freehub, or pick one of these HG cassettes instead")
 
-## React Compiler
+Not sure what freehub you have? The **driver wizard** walks you through identifying HG splined vs Micro Spline vs XD in a few questions with pictures.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How it works
 
-## Expanding the Oxlint configuration
+- **`src/domain/`** — Zod schemas for every component category (cassette, rear derailleur, shifter, chain, crankset, rear hub/driver). Specs are the real compatibility surfaces: driver interface, actuation standard (cable pull family), speeds, max cog, total capacity, chain standard and width.
+- **`src/data/`** — the curated parts database (~60 Shimano/SRAM/KMC MTB parts as JSON, validated at load), bike presets, and `overrides/known-combos.json`: hand-authored cross-brand knowledge with a compatibility tier and sources. Every override is scoped to a single rule so community knowledge can never blanket-approve an unrelated mismatch.
+- **`src/engine/`** — a pure TypeScript rules engine. Declarative pairwise rules (driver interface, actuation match, speed counts, max cog, chain-wrap capacity, chain width/standard) produce a verdict, a mechanic-readable explanation, and actionable fix suggestions. `checkSwap` diffs the build before/after a candidate part — that's what powers the live drag-hover verdict.
+- **UI** — React + Vite + Tailwind, dnd-kit drag-and-drop (touch-friendly), Zustand + localStorage for your garage and custom parts. No backend; deploys as a static site.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Develop
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+pnpm install
+pnpm dev        # dev server
+pnpm test       # engine + data integrity unit tests (vitest)
+pnpm e2e        # Playwright smoke tests
+pnpm build      # typecheck + production build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Adding parts: drop them into a JSON file under `src/data/components/` (the integrity tests catch typos), or use **Catalog → Add custom part** in the app. Cross-brand knowledge goes in `src/data/overrides/known-combos.json`.
+
+## Deploy
+
+Pushes to `main` build and deploy to GitHub Pages via `.github/workflows/deploy.yml` (enable Pages → Source: GitHub Actions in the repo settings).
