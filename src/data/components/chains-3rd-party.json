@@ -1,0 +1,27 @@
+[
+  {
+    "id": "kmc-x11",
+    "category": "chain",
+    "brand": "KMC",
+    "series": "X11",
+    "model": "X11",
+    "speeds": 11,
+    "chainStandard": "hg",
+    "innerWidthMm": 5.5,
+    "directional": false,
+    "masterLink": "quicklink"
+  },
+  {
+    "id": "kmc-x12",
+    "category": "chain",
+    "brand": "KMC",
+    "series": "X12",
+    "model": "X12",
+    "speeds": 12,
+    "chainStandard": "hg",
+    "innerWidthMm": 5.25,
+    "directional": false,
+    "masterLink": "quicklink",
+    "notes": "Marketed as compatible with both SRAM Eagle and Shimano 12-speed drivetrains."
+  }
+]

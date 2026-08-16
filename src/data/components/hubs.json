@@ -1,0 +1,57 @@
+[
+  {
+    "id": "generic-hub-hg",
+    "category": "rearHub",
+    "brand": "Generic",
+    "series": "OEM wheel",
+    "model": "Standard HG splined driver",
+    "speeds": 11,
+    "driverInterface": "hg-splined",
+    "swappableTo": [],
+    "notes": "Typical stock wheel with no aftermarket driver options."
+  },
+  {
+    "id": "generic-hub-ms",
+    "category": "rearHub",
+    "brand": "Generic",
+    "series": "OEM wheel",
+    "model": "Micro Spline driver",
+    "speeds": 12,
+    "driverInterface": "micro-spline",
+    "swappableTo": [],
+    "notes": "Typical stock wheel with no aftermarket driver options."
+  },
+  {
+    "id": "generic-hub-xd",
+    "category": "rearHub",
+    "brand": "Generic",
+    "series": "OEM wheel",
+    "model": "XD driver",
+    "speeds": 12,
+    "driverInterface": "xd",
+    "swappableTo": [],
+    "notes": "Typical stock wheel with no aftermarket driver options."
+  },
+  {
+    "id": "dt-swiss-350-hg",
+    "category": "rearHub",
+    "brand": "DT Swiss",
+    "series": "350",
+    "model": "350 hub (HG driver fitted)",
+    "speeds": 12,
+    "driverInterface": "hg-splined",
+    "swappableTo": ["hg-splined", "micro-spline", "xd", "xdr"],
+    "notes": "Ratchet driver swaps by hand in minutes — HG, Micro Spline, XD and XDR bodies available."
+  },
+  {
+    "id": "i9-hydra-xd",
+    "category": "rearHub",
+    "brand": "Industry Nine",
+    "series": "Hydra",
+    "model": "Hydra hub (XD driver fitted)",
+    "speeds": 12,
+    "driverInterface": "xd",
+    "swappableTo": ["hg-splined", "micro-spline", "xd", "xdr"],
+    "notes": "Driver bodies available for every common interface."
+  }
+]

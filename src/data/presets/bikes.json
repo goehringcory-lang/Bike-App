@@ -1,0 +1,54 @@
+[
+  {
+    "id": "surly-lht-disc-gx11",
+    "name": "2015 Surly Long Haul Trucker Disc — SRAM GX 1x11",
+    "slots": {
+      "cassette": "sram-pg-1130-11-42",
+      "rearDerailleur": "sram-rd-gx-11",
+      "shifter": "sram-sl-gx-11",
+      "chain": "sram-cn-pc-1130",
+      "crankset": "sram-fc-gx-1400-32",
+      "rearHub": "generic-hub-hg"
+    },
+    "meta": { "year": 2015, "frameNotes": "Steel touring frame, 135mm QR rear spacing" }
+  },
+  {
+    "id": "hightower-gx-eagle",
+    "name": "2020 Santa Cruz Hightower — SRAM GX Eagle",
+    "slots": {
+      "cassette": "sram-xg-1275-10-50",
+      "rearDerailleur": "sram-rd-gx-eagle-10-50",
+      "shifter": "sram-sl-gx-eagle",
+      "chain": "sram-cn-gx-eagle",
+      "crankset": "sram-fc-gx-eagle-32",
+      "rearHub": "generic-hub-xd"
+    },
+    "meta": { "year": 2020, "frameNotes": "Boost 148 rear spacing" }
+  },
+  {
+    "id": "fuel-ex-xt-m8100",
+    "name": "2021 Trek Fuel EX — Shimano XT M8100",
+    "slots": {
+      "cassette": "shimano-cs-m8100-10-51",
+      "rearDerailleur": "shimano-rd-m8100-sgs",
+      "shifter": "shimano-sl-m8100",
+      "chain": "shimano-cn-m8100",
+      "crankset": "shimano-fc-m8100-32",
+      "rearHub": "generic-hub-ms"
+    },
+    "meta": { "year": 2021, "frameNotes": "Boost 148 rear spacing" }
+  },
+  {
+    "id": "honzo-deore-m5100",
+    "name": "2019 Kona Honzo — Shimano Deore M5100, DT Swiss wheels",
+    "slots": {
+      "cassette": "shimano-cs-m5100-11-51",
+      "rearDerailleur": "shimano-rd-m5100-sgs",
+      "shifter": "shimano-sl-m5100",
+      "chain": "shimano-cn-hg601",
+      "crankset": "shimano-fc-m7000-30",
+      "rearHub": "dt-swiss-350-hg"
+    },
+    "meta": { "year": 2019, "frameNotes": "DT Swiss 350 rear hub — driver body is swappable" }
+  }
+]

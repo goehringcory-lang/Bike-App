@@ -1,0 +1,84 @@
+[
+  {
+    "id": "eleven-speed-chains-interchange",
+    "overridesRule": "chain-standard",
+    "level": "verified",
+    "match": [
+      { "category": "chain", "speeds": 11 },
+      { "category": "cassette", "speeds": 11 }
+    ],
+    "explanation": "11-speed chains are effectively interchangeable across brands: Shimano, SRAM and KMC 11s chains all run quietly on each other's 11-speed MTB cassettes.",
+    "source": "Long-standing community and shop consensus"
+  },
+  {
+    "id": "ten-speed-chains-interchange",
+    "overridesRule": "chain-standard",
+    "level": "verified",
+    "match": [
+      { "category": "chain", "speeds": 10 },
+      { "category": "cassette", "speeds": 10 }
+    ],
+    "explanation": "10-speed chains are interchangeable across brands on 10-speed cassettes.",
+    "source": "Long-standing community and shop consensus"
+  },
+  {
+    "id": "hgplus-chain-on-eagle-cassette",
+    "overridesRule": "chain-standard",
+    "level": "works-with-caveats",
+    "match": [
+      { "category": "chain", "chainStandard": "hyperglide-plus" },
+      { "category": "cassette", "chainStandard": "sram-eagle" }
+    ],
+    "explanation": "A Shimano Hyperglide+ 12s chain runs fine on a SRAM Eagle cassette — widths are close enough (5.25mm inner).",
+    "caveats": [
+      "You lose the Hyperglide+ directional shift-ramp benefit, which only works on Shimano 12s cassettes.",
+      "Mind the chain's direction marking when installing — HG+ chains are directional."
+    ],
+    "source": "Community consensus (widely run 'mullet' chain setup)"
+  },
+  {
+    "id": "eagle-chain-on-shimano-12s-cassette",
+    "overridesRule": "chain-standard",
+    "level": "works-with-caveats",
+    "match": [
+      { "category": "chain", "chainStandard": "sram-eagle" },
+      { "category": "cassette", "chainStandard": "hyperglide-plus" }
+    ],
+    "explanation": "A SRAM Eagle chain works on a Shimano 12s Micro Spline cassette; shifting is good, though Shimano recommends a Hyperglide+ chain for best performance.",
+    "caveats": ["Slightly less crisp shifting than a Hyperglide+ chain on Shimano ramps."],
+    "source": "Community consensus"
+  },
+  {
+    "id": "kmc-x12-on-any-12s-cassette",
+    "overridesRule": "chain-standard",
+    "level": "verified",
+    "match": [
+      { "category": "chain", "brand": "KMC", "speeds": 12 },
+      { "category": "cassette", "speeds": 12 }
+    ],
+    "explanation": "KMC X12 is designed and marketed as compatible with both SRAM Eagle and Shimano 12-speed drivetrains.",
+    "source": "KMC compatibility chart"
+  },
+  {
+    "id": "shimano11-shifter-sram11-rd-blocked",
+    "overridesRule": "shifter-rd-actuation",
+    "level": "incompatible",
+    "match": [
+      { "category": "shifter", "actuation": "shimano-dynasys-11" },
+      { "category": "rearDerailleur", "actuation": "sram-x-actuation-11" }
+    ],
+    "explanation": "Shimano 11s MTB shifters pull about 1.1mm of cable per shift (Dyna-Sys), while SRAM X-Actuation derailleurs expect a different ratio — the derailleur will move the wrong amount per click and never index across the cassette. This is the classic cross-brand pairing that does NOT work, even though both are '11-speed'.",
+    "source": "Manufacturer pull-ratio specs"
+  },
+  {
+    "id": "sram11-shifter-shimano11-rd-blocked",
+    "overridesRule": "shifter-rd-actuation",
+    "level": "incompatible",
+    "match": [
+      { "category": "shifter", "actuation": "sram-x-actuation-11" },
+      { "category": "rearDerailleur", "actuation": "shimano-dynasys-11" }
+    ],
+    "explanation": "SRAM X-Actuation shifters and Shimano Dyna-Sys derailleurs use different cable-pull ratios — indexing will be off across the range. Keep shifter and rear derailleur in the same actuation family.",
+    "source": "Manufacturer pull-ratio specs"
+  }
+]

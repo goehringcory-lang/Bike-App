@@ -1,0 +1,109 @@
+[
+  {
+    "id": "sram-pg-1130-11-42",
+    "category": "cassette",
+    "brand": "SRAM",
+    "series": "GX 11s",
+    "model": "PG-1130 (11-42)",
+    "speeds": 11,
+    "driverInterface": "hg-splined",
+    "smallestCog": 11,
+    "largestCog": 42,
+    "chainStandard": "sram-11"
+  },
+  {
+    "id": "sram-xg-1150-10-42",
+    "category": "cassette",
+    "brand": "SRAM",
+    "series": "GX 11s",
+    "model": "XG-1150 (10-42)",
+    "speeds": 11,
+    "driverInterface": "xd",
+    "smallestCog": 10,
+    "largestCog": 42,
+    "chainStandard": "sram-11"
+  },
+  {
+    "id": "sram-xg-1180-10-42",
+    "category": "cassette",
+    "brand": "SRAM",
+    "series": "X1",
+    "model": "XG-1180 (10-42)",
+    "speeds": 11,
+    "driverInterface": "xd",
+    "smallestCog": 10,
+    "largestCog": 42,
+    "chainStandard": "sram-11"
+  },
+  {
+    "id": "sram-rd-gx-11",
+    "category": "rearDerailleur",
+    "brand": "SRAM",
+    "series": "GX 11s",
+    "model": "GX 1x11 RD",
+    "speeds": 11,
+    "actuation": "sram-x-actuation-11",
+    "maxCogTeeth": 42,
+    "minCogTeeth": 10,
+    "totalCapacity": 32,
+    "cageLength": "long",
+    "clutch": true
+  },
+  {
+    "id": "sram-rd-x1-11",
+    "category": "rearDerailleur",
+    "brand": "SRAM",
+    "series": "X1",
+    "model": "X1 RD",
+    "speeds": 11,
+    "actuation": "sram-x-actuation-11",
+    "maxCogTeeth": 42,
+    "minCogTeeth": 10,
+    "totalCapacity": 32,
+    "cageLength": "long",
+    "clutch": true
+  },
+  {
+    "id": "sram-sl-gx-11",
+    "category": "shifter",
+    "brand": "SRAM",
+    "series": "GX 11s",
+    "model": "GX 11s Trigger",
+    "speeds": 11,
+    "actuation": "sram-x-actuation-11",
+    "type": "trigger"
+  },
+  {
+    "id": "sram-sl-x1-11",
+    "category": "shifter",
+    "brand": "SRAM",
+    "series": "X1",
+    "model": "X1 Trigger",
+    "speeds": 11,
+    "actuation": "sram-x-actuation-11",
+    "type": "trigger"
+  },
+  {
+    "id": "sram-cn-pc-1130",
+    "category": "chain",
+    "brand": "SRAM",
+    "series": "PC-1130",
+    "model": "PC-1130",
+    "speeds": 11,
+    "chainStandard": "sram-11",
+    "innerWidthMm": 5.5,
+    "directional": false,
+    "masterLink": "powerlock"
+  },
+  {
+    "id": "sram-fc-gx-1400-32",
+    "category": "crankset",
+    "brand": "SRAM",
+    "series": "GX 1400",
+    "model": "GX 1400 GXP (32t)",
+    "speeds": 11,
+    "ringCount": 1,
+    "chainringTeeth": [32],
+    "chainlineMm": 49
+  }
+]
